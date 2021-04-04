@@ -128,7 +128,6 @@ UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery)
         __critical
         {
             hUGE_init(&songwinner); //adding add_VBL(hUGE_dosound); twice actually speeds up the audio 2x
-            add_VBL(hUGE_dosound);
         }
     }
 
@@ -161,11 +160,11 @@ void main()
     NR51_REG = 0xFF;
     NR50_REG = 0x77;
 
-    // __critical
-    // {
-    //     hUGE_init(&songmario);
-    //     add_VBL(hUGE_dosound);
-    // }
+    __critical
+    {
+        hUGE_init(&songmario);
+        add_VBL(hUGE_dosound);
+    }
 
     set_bkg_data(0, 5, WallSprites1tile);
     set_bkg_tiles(0, 0, 20, 18, WallMap1tile); //0,0 is the start, 20, 18 is the end result (aka full screen size, no scrolling)
@@ -202,25 +201,25 @@ void main()
             waitpadup();
             break;
         case J_UP:
-            sfx_play(SFX_4);
+            // sfx_play(SFX_4);
             movecheck();
             // waitpadup();
             performantdelay(2);
             break;
         case J_DOWN:
-            sfx_play(SFX_4);
+            // sfx_play(SFX_4);
             movecheck();
             // waitpadup();
             performantdelay(2);
             break;
         case J_LEFT:
-            sfx_play(SFX_4);
+            // sfx_play(SFX_4);
             movecheck();
             // waitpadup();
             performantdelay(2);
             break;
         case J_RIGHT:
-            sfx_play(SFX_4);
+            // sfx_play(SFX_4);
             movecheck();
             // waitpadup();
             performantdelay(2);
