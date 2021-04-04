@@ -226,7 +226,7 @@ void main()
             performantdelay(2);
             break;
         case J_START:
-            // sfx_play(SFX_6);
+            sfx_play(SFX_2);
             movecheck();
             waitpadup();
             break;
