@@ -18,8 +18,9 @@ UBYTE debug = 0;  //equals 1 by default (but not for tut?)
 UBYTE haskey = 0; //equals 1 by default (but not for tut?)
 UBYTE gamerunning;
 
+//defining a function
 void performantdelay(UINT8 numloops)
-{ //defining a function
+{
     UINT8 i;
     for (i = 0; i < numloops; i++)
     {
