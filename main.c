@@ -1,4 +1,4 @@
-//sound.h is the SFX page
+//sound.h is the SFX page.
 #include <stdio.h>
 #include <gb/gb.h>
 #include "wallMap1tile.c"
