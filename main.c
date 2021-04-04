@@ -28,8 +28,9 @@ void performantdelay(UINT8 numloops)
     }
 }
 
-void movecheck();                                        //forward declare
-UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery); //forward declare
+void movecheck();                                              //forward declare
+UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery);       //forward declare
+void animatesprite(UINT8 spriteindex, INT8 movex, INT8 movey); //forward declare
 void movecheck()
 {
     if (joypad() & J_LEFT)
@@ -153,11 +154,11 @@ void main()
     NR51_REG = 0xFF;
     NR50_REG = 0x77;
 
-    __critical
-    {
-        hUGE_init(&songmario);
-        add_VBL(hUGE_dosound);
-    }
+    // __critical
+    // {
+    //     hUGE_init(&songmario);
+    //     add_VBL(hUGE_dosound);
+    // }
 
     set_bkg_data(0, 5, WallSprites1tile);
     set_bkg_tiles(0, 0, 20, 18, WallMap1tile); //0,0 is the start, 20, 18 is the end result (aka full screen size, no scrolling)
@@ -180,46 +181,51 @@ void main()
         performantdelay(6);
 
         joystate = joypad();
+        movecheck(); //will movecheck for every button press from here rather than below
         switch (joystate)
         {
         case J_A:
             sfx_play(SFX_0);
-            movecheck();
+            // movecheck();
             waitpadup();
             break;
         case J_B:
             sfx_play(SFX_1);
-            movecheck();
+            // movecheck();
             waitpadup();
             break;
         case J_UP:
             sfx_play(SFX_2);
-            movecheck();
-            waitpadup();
+            // movecheck();
+            // waitpadup();
+            performantdelay(2);
             break;
         case J_DOWN:
             sfx_play(SFX_3);
-            movecheck();
-            waitpadup();
+            // movecheck();
+            // waitpadup();
+            performantdelay(2);
             break;
         case J_LEFT:
             sfx_play(SFX_4);
-            movecheck();
-            waitpadup();
+            // movecheck();
+            // waitpadup();
+            performantdelay(2);
             break;
         case J_RIGHT:
             sfx_play(SFX_5);
-            movecheck();
-            waitpadup();
+            // movecheck();
+            // waitpadup();
+            performantdelay(2);
             break;
         case J_START:
             sfx_play(SFX_6);
-            movecheck();
+            // movecheck();
             waitpadup();
             break;
         case J_SELECT:
             sfx_play(SFX_7);
-            movecheck();
+            // movecheck();
             waitpadup();
             break;
         default:
