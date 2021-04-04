@@ -9,6 +9,7 @@
 
 extern const hUGESong_t songmario; //there is a var called twitchsong somewhere
 extern const hUGESong_t songwinner;
+extern const hUGESong_t songbaseball;
 unsigned char current_sfx = 0;
 unsigned char joystate;
 
@@ -162,7 +163,7 @@ void main()
 
     __critical
     {
-        hUGE_init(&songmario);
+        hUGE_init(&songbaseball);
         add_VBL(hUGE_dosound);
     }
 
@@ -201,25 +202,25 @@ void main()
             waitpadup();
             break;
         case J_UP:
-            // sfx_play(SFX_4);
+            sfx_play(SFX_4);
             movecheck();
             // waitpadup();
             performantdelay(2);
             break;
         case J_DOWN:
-            // sfx_play(SFX_4);
+            sfx_play(SFX_4);
             movecheck();
             // waitpadup();
             performantdelay(2);
             break;
         case J_LEFT:
-            // sfx_play(SFX_4);
+            sfx_play(SFX_4);
             movecheck();
             // waitpadup();
             performantdelay(2);
             break;
         case J_RIGHT:
-            // sfx_play(SFX_4);
+            sfx_play(SFX_4);
             movecheck();
             // waitpadup();
             performantdelay(2);
