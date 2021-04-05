@@ -19,8 +19,6 @@ UBYTE debug = 0;  //equals 1 by default (but not for tut?)
 UBYTE haskey = 0; //equals 1 by default (but not for tut?)
 UBYTE gamerunning;
 
-joystate = joypad();
-
 //defining a function
 void performantdelay(UINT8 numloops)
 {
@@ -34,48 +32,45 @@ void performantdelay(UINT8 numloops)
 void movecheck();                                              //forward declare
 UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery);       //forward declare
 void animatesprite(UINT8 spriteindex, INT8 movex, INT8 movey); //forward declare
-// void movecheck()
-// {
-//     if (joypad() & J_LEFT)
-//     {
-//         if (canplayermove(playerlocation[0] - 8, playerlocation[1]))
-//         {
-//             playerlocation[0] -= 8;
-//             animatesprite(0, -8, 0);
-//         }
-//     }
+void movecheck()
+{
+    if (joypad() & J_LEFT)
+    {
+        if (canplayermove(playerlocation[0] - 8, playerlocation[1]))
+        {
+            playerlocation[0] -= 8;
+            animatesprite(0, -8, 0);
+        }
+    }
 
-//     else if (joypad() & J_RIGHT)
-//     {
-//         if (canplayermove(playerlocation[0] + 8, playerlocation[1]))
-//         {
-//             playerlocation[0] += 8;
-//             animatesprite(0, +8, 0);
-//             // move_sprite(0, playerlocation[0], playerlocation[1]);
-//         }
-//     }
-//     else if (joypad() & J_UP)
-//     {
-//         if (canplayermove(playerlocation[0], playerlocation[1] - 8))
-//         {
-//             playerlocation[1] -= 8;
-//             animatesprite(0, 0, -8);
-//             // move_sprite(0, playerlocation[0], playerlocation[1]);
-//         }
-//     }
-//     else if (joypad() & J_DOWN)
-//     {
-//         if (canplayermove(playerlocation[0], playerlocation[1] + 8))
-//         {
-//             playerlocation[1] += 8;
-//             animatesprite(0, 0, +8);
-//             // move_sprite(0, playerlocation[0], playerlocation[1]);
-//         }
-//         sfx_play(SFX_4);
-
-//         performantdelay(2);
-//     }
-// }
+    else if (joypad() & J_RIGHT)
+    {
+        if (canplayermove(playerlocation[0] + 8, playerlocation[1]))
+        {
+            playerlocation[0] += 8;
+            animatesprite(0, +8, 0);
+            // move_sprite(0, playerlocation[0], playerlocation[1]);
+        }
+    }
+    else if (joypad() & J_UP)
+    {
+        if (canplayermove(playerlocation[0], playerlocation[1] - 8))
+        {
+            playerlocation[1] -= 8;
+            animatesprite(0, 0, -8);
+            // move_sprite(0, playerlocation[0], playerlocation[1]);
+        }
+    }
+    else if (joypad() & J_DOWN)
+    {
+        if (canplayermove(playerlocation[0], playerlocation[1] + 8))
+        {
+            playerlocation[1] += 8;
+            animatesprite(0, 0, +8);
+            // move_sprite(0, playerlocation[0], playerlocation[1]);
+        }
+    }
+}
 
 UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery)
 {
@@ -192,6 +187,7 @@ void main()
 
         performantdelay(6);
 
+        joystate = joypad();
         // movecheck(); //will movecheck for every button press from here rather than below
         switch (joystate)
         {
@@ -213,13 +209,8 @@ void main()
             break;
         case J_DOWN:
             sfx_play(SFX_4);
+            movecheck();
             // waitpadup();
-            if (canplayermove(playerlocation[0], playerlocation[1] + 8))
-            {
-                playerlocation[1] += 8;
-                animatesprite(0, 0, +8);
-                // move_sprite(0, playerlocation[0], playerlocation[1]);
-            }
             performantdelay(2);
             break;
         case J_LEFT:
