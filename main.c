@@ -6,7 +6,7 @@
 #include "snailSprite.c"
 #include "hUGEDriver.h"
 #include "sound.h"
-
+//this is the reference for Day 2
 extern const hUGESong_t songmario; //there is a var called twitchsong somewhere
 extern const hUGESong_t songwinner;
 extern const hUGESong_t songbaseball;
