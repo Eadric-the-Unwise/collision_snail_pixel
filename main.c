@@ -18,6 +18,7 @@ UINT8 playerlocation[2];
 UBYTE debug = 0;  //equals 1 by default (but not for tut?)
 UBYTE haskey = 0; //equals 1 by default (but not for tut?)
 UBYTE gamerunning;
+UINT8 currentspriteindex = 0;
 
 //defining a function
 void performantdelay(UINT8 numloops)
@@ -27,6 +28,17 @@ void performantdelay(UINT8 numloops)
     {
         wait_vbl_done(); //vbl_done = every time the screen is finished writing
     }
+}
+
+void animateSnail()
+{
+    currentspriteindex++;
+    if (currentspriteindex >= 3)
+    {
+        currentspriteindex = 0;
+    }
+    set_sprite_tile(0, currentspriteindex);
+    // delay(5);
 }
 
 UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery);       //forward declare
@@ -68,6 +80,7 @@ void movecheck()
             animatesprite(0, 0, +8);
             // move_sprite(0, playerlocation[0], playerlocation[1]);
         }
+        delay(50);
     }
 }
 
@@ -169,7 +182,7 @@ void main()
     set_bkg_data(0, 5, WallSprites1tile);
     set_bkg_tiles(0, 0, 20, 18, WallMap1tile); //0,0 is the start, 20, 18 is the end result (aka full screen size, no scrolling)
 
-    set_sprite_data(0, 1, SnailSprite); //defines the sprite data
+    set_sprite_data(0, 3, SnailSprite); //defines the sprite data
     set_sprite_tile(0, 0);              //defines the tiles numbers
 
     playerlocation[0] = 16;
@@ -208,9 +221,8 @@ void main()
             break;
         case J_DOWN:
             sfx_play(SFX_4);
+            animateSnail();
             movecheck();
-            // waitpadup();
-            performantdelay(2);
             break;
         case J_LEFT:
             sfx_play(SFX_4);

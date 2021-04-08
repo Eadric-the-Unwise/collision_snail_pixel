@@ -10,7 +10,7 @@
   Compression          : None.
   Counter              : None.
   Tile size            : 8 x 8
-  Tiles                : 0 to 0
+  Tiles                : 0 to 2
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -24,8 +24,8 @@
 
 
 /* Bank of tiles. */
-#define SnailSpriteBank 0
+#define TileLabelBank 0
 /* Start of tile array. */
-extern unsigned char SnailSprite[];
+extern unsigned char TileLabel[];
 
 /* End of SNAILSPRITE.H */
