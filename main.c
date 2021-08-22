@@ -16,8 +16,7 @@ unsigned char joystate;
 
 const char blankmap[1] = {0x00};
 UINT8 playerlocation[2];
-UBYTE debug = 0;   //equals 1 by default (but not for tut?)
-UBYTE haskey = 0;  //equals 1 by default (but not for tut?)
+UBYTE debug = 0;  //equals 1 by default (but not for tut?)
 UBYTE gamerunning;
 UINT8 currentspriteindex = 0;
 
@@ -37,22 +36,13 @@ void performantdelay(UINT8 numloops) {
     }
 }
 
-void animateSnail() {
-    currentspriteindex++;
-    if (currentspriteindex >= 3) {
-        currentspriteindex = 0;
-    }
-    set_sprite_tile(0, currentspriteindex);
-    // delay(5);
-}
-
 UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery);        //forward declare
 void animatesprite(UINT8 spriteindex, INT8 movex, INT8 movey);  //forward declare
 void movecheck() {
     if (joypad() & J_LEFT) {
         if (canplayermove(playerlocation[0] - 8, playerlocation[1])) {
-            playerlocation[0] -= 1;
-            animatesprite(0, -1, 0);
+            playerlocation[0] -= 8;
+            animatesprite(0, -8, 0);
         }
     }
 
@@ -74,7 +64,7 @@ void movecheck() {
             animatesprite(0, 0, +8);
             // move_sprite(0, playerlocation[0], playerlocation[1]);
         }
-        delay(50);
+        delay(20);
     }
 }
 
@@ -86,49 +76,7 @@ UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery) {
     indexTLy = (newplayery - 16) / 8;
     tileindexTL = 20 * indexTLy + indexTLx;
 
-    if (debug) {
-        printf("%u %u\n", (UINT16)(newplayerx), (UINT16)(newplayery));
-        printf("%u %u %u\n", (UINT16)indexTLx, (UINT16)indexTLy, (UINT16)tileindexTL);
-    }
-
     result = WallMap1tile[tileindexTL] == blankmap[0];
-
-    //   set_bkg_tiles(1,11,1,1, chest);
-
-    if (tileindexTL == 161) {
-        //collect key
-        result = 1;  //allows you to walk into the previously inaccessable space
-        haskey = 1;
-        sfx_play(SFX_5);
-        set_bkg_tiles(1, 8, 1, 1, blankmap);  //the tile at the key location will blank
-    }
-    // else if (tileindexTL == 122)
-    // {
-    //     sfx_play(SFX_6);
-    // }
-    else if (tileindexTL == 122 && haskey) {
-        //open door
-        sfx_play(SFX_7);
-        result = 1;
-        set_bkg_tiles(2, 6, 1, 1, blankmap);
-    }
-
-    if (tileindexTL == 201) {
-        //open chest
-        sfx_play(SFX_3);
-        result = 1;
-        set_bkg_tiles(1, 10, 1, 1, blankmap);
-    } else if (tileindexTL == 240 || tileindexTL == 260) {
-        //finish game
-        gamerunning = 0;
-
-        HIDE_SPRITES;
-        printf("\n \n \n \n \n \n \n \n \n      YOU WIN!");
-        result = 1;
-        __critical {
-            hUGE_init(&songwinner);  //adding add_VBL(hUGE_dosound); twice actually speeds up the audio 2x
-        }
-    }
 
     return result;
 }
@@ -145,6 +93,7 @@ void animatesprite(UINT8 spriteindex, INT8 movex, INT8 movey) {
         wait_vbl_done();
     }
 }
+UINT16 PosX, PosY;
 
 void main() {
     SHOW_SPRITES;
@@ -171,63 +120,58 @@ void main() {
     move_sprite(0, playerlocation[0], playerlocation[1]);
 
     while (gamerunning) {
-        //debugging feature
-        //  if(joypad() & J_A){
-        //     debug = (debug == 0 ? 1 : 0);
-        // }
-
         performantdelay(1);
+        PosX = PosY = 64;
 
         joystate = joypad();
         // movecheck(); //will movecheck for every button press from here rather than below
         switch (joystate) {
             case J_A:
-                // sfx_play(SFX_0);
+
                 movecheck();
                 waitpadup();
                 break;
             case J_B:
-                // sfx_play(SFX_1);
+
                 movecheck();
                 waitpadup();
                 break;
             case J_UP:
-                sfx_play(SFX_4);
+
                 movecheck();
                 // waitpadup();
                 performantdelay(2);
                 break;
             case J_DOWN:
-                sfx_play(SFX_4);
-                animateSnail();
+
                 movecheck();
                 break;
             case J_LEFT:
-                sfx_play(SFX_4);
+
                 movecheck();
                 // waitpadup();
                 performantdelay(2);
                 break;
             case J_RIGHT:
-                sfx_play(SFX_4);
+
                 movecheck();
                 // waitpadup();
                 performantdelay(2);
                 break;
             case J_START:
-                sfx_play(SFX_2);
+
                 movecheck();
                 waitpadup();
                 break;
             case J_SELECT:
-                // sfx_play(SFX_7);
+
                 movecheck();
                 waitpadup();
                 break;
             default:
                 break;
         }
-        sfx_update();
+
         wait_vbl_done();
     }
 }
