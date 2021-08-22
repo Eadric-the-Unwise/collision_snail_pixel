@@ -1,3 +1,4 @@
+//sound.h is the SFX page.
 #include <gb/gb.h>
 #include <stdio.h>
 
@@ -21,9 +22,15 @@ UINT8 sprite_data[] = {
 
 };
 
-//forward declare
-UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery);
-UBYTE canplayermoveup(UINT8 newplayerx, UINT8 newplayery);
+//defining a function
+void performantdelay(UINT8 numloops) {
+    UINT8 i;
+    for (i = 0; i < numloops; i++) {
+        wait_vbl_done();  //vbl_done = every time the screen is finished writing
+    }
+}
+
+UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery);  //forward declare
 void updateplayer();
 UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery) {
     UINT16 indexTLx, indexTLy, tileindexTL;
@@ -34,18 +41,6 @@ UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery) {
     tileindexTL = 20 * indexTLy + indexTLx;
 
     result = WallMap1tile[tileindexTL] == blankmap[0];
-
-    return result;
-}
-UBYTE canplayermoveup(UINT8 newplayerx, UINT8 newplayery) {
-    UINT16 indexTRx, indexTRy, tileindexTR;
-    UBYTE result;
-
-    indexTRx = (newplayerx) / 8;
-    indexTRy = (newplayery - 16) / 8;
-    tileindexTR = 20 * indexTRy + indexTRx;
-
-    result = WallMap1tile[tileindexTR] == blankmap[0];
 
     return result;
 }
@@ -74,12 +69,14 @@ void main() {
     joypad_init(1, &joypads);
 
     while (gamerunning) {
+        performantdelay(1);
+
         // poll joypads
         joypad_ex(&joypads);
 
         // game object
         if (joypads.joy0 & J_UP) {
-            if ((canplayermove(PosX, PosY - 1)) && (canplayermoveup(PosX, PosY - 1))) {
+            if (canplayermove(PosX, PosY - 3)) {
                 SpdY -= 2;
                 if (SpdY < -4) SpdY = -4;
                 updateplayer();
