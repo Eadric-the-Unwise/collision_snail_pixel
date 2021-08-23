@@ -1,6 +1,13 @@
 #include <gb/gb.h>
 #include <stdio.h>
 
+#include "./res/bkg_map.h"
+#include "./res/bkg_tiles.h"
+#include "./res/collision_map.h"
+#include "./res/collision_tiles.h"
+#include "./res/collisions.h"
+#include "./res/wall_map.h"
+#include "./res/wall_tiles.h"
 #include "wallMap1tile.c"
 #include "wallSprites1tile.c"
 
@@ -33,7 +40,7 @@ UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery) {
     indexTLy = (newplayery - 16) / 8;
     tileindexTL = 20 * indexTLy + indexTLx;
 
-    result = WallMap1tile[tileindexTL] == blankmap[0];
+    result = COLLISION_MAP[tileindexTL] == blankmap[0];
 
     return result;
 }
@@ -45,7 +52,7 @@ UBYTE canplayermoveup(UINT8 newplayerx, UINT8 newplayery) {
     indexTRy = (newplayery - 16) / 8;
     tileindexTR = 20 * indexTRy + indexTRx;
 
-    result = WallMap1tile[tileindexTR] == blankmap[0];
+    result = COLLISION_MAP[tileindexTR] == blankmap[0];
 
     return result;
 }
@@ -59,9 +66,10 @@ void main() {
     SHOW_SPRITES;
     SHOW_BKG;
     DISPLAY_ON;
+    BGP_REG = 0x1B;
 
-    set_bkg_data(0, 5, WallSprites1tile);
-    set_bkg_tiles(0, 0, 20, 18, WallMap1tile);  //0,0 is the start, 20, 18 is the end result (aka full screen size, no scrolling)
+    set_bkg_data(0, WALL_TILE_COUNT, WALL_TILE_DATA);
+    set_bkg_tiles(0, 0, WALL_MAP_WIDTH, WALL_MAP_HEIGHT, WALL_MAP_DATA);  //0,0 is the start, 20, 18 is the end result (aka full screen size, no scrolling)
 
     set_sprite_data(0, 4, sprite_data);
     set_sprite_tile(0, 0);  //defines the tiles numbers
