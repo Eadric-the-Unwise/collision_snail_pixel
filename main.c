@@ -1,6 +1,8 @@
 #include <gb/gb.h>
 #include <stdio.h>
 
+#include "./res/map_map.h"
+#include "./res/map_tiles.h"
 #include "wallMap1tile.c"
 #include "wallSprites1tile.c"
 
@@ -60,7 +62,7 @@ void main() {
     SHOW_BKG;
     DISPLAY_ON;
 
-    set_bkg_data(0, 5, WallSprites1tile);
+    set_bkg_data(0, 5, MAP_MAP_DATA);
     set_bkg_tiles(0, 0, 20, 18, WallMap1tile);  //0,0 is the start, 20, 18 is the end result (aka full screen size, no scrolling)
 
     set_sprite_data(0, 4, sprite_data);
@@ -86,7 +88,7 @@ void main() {
             }
             // else SpdY = 4;
         } else if (joypads.joy0 & J_DOWN) {
-            if (canplayermove(PosX, PosY + 10)) {
+            if (canplayermove(PosX, PosY + 8)) {
                 SpdY += 2;
                 if (SpdY > 4) SpdY = 4;
                 updateplayer();
@@ -94,14 +96,14 @@ void main() {
             // else SpdY = -4;
         }
         if (joypads.joy0 & J_LEFT) {
-            if (canplayermove(PosX - 3, PosY)) {
+            if (canplayermove(PosX - 1, PosY)) {
                 SpdX -= 2;
                 if (SpdX < -4) SpdX = -4;
                 updateplayer();
             }
 
         } else if (joypads.joy0 & J_RIGHT) {
-            if (canplayermove(PosX + 10, PosY)) {
+            if (canplayermove(PosX + 8, PosY)) {
                 SpdX += 2;
                 if (SpdX > 4) SpdX = 4;
                 updateplayer();
