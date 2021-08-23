@@ -29,10 +29,12 @@ UINT8 sprite_data[] = {
 };
 
 //forward declare
-UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery);
-UBYTE canplayermoveup(UINT8 newplayerx, UINT8 newplayery);
+UBYTE canplayermoveTL(UINT8 newplayerx, UINT8 newplayery);
+UBYTE canplayermoveTR(UINT8 newplayerx, UINT8 newplayery);
+UBYTE canplayermoveBL(UINT8 newplayerx, UINT8 newplayery);
+UBYTE canplayermoveBR(UINT8 newplayerx, UINT8 newplayery);
 void updateplayer();
-UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery) {
+UBYTE canplayermoveTL(UINT8 newplayerx, UINT8 newplayery) {
     UINT16 indexTLx, indexTLy, tileindexTL;
     UBYTE result;
 
@@ -44,7 +46,8 @@ UBYTE canplayermove(UINT8 newplayerx, UINT8 newplayery) {
 
     return result;
 }
-UBYTE canplayermoveup(UINT8 newplayerx, UINT8 newplayery) {
+//top right pixel
+UBYTE canplayermoveTR(UINT8 newplayerx, UINT8 newplayery) {
     UINT16 indexTRx, indexTRy, tileindexTR;
     UBYTE result;
 
@@ -53,6 +56,32 @@ UBYTE canplayermoveup(UINT8 newplayerx, UINT8 newplayery) {
     tileindexTR = 20 * indexTRy + indexTRx;
 
     result = COLLISION_MAP[tileindexTR] == blankmap[0];
+
+    return result;
+}
+//bottom right pixel
+UBYTE canplayermoveBR(UINT8 newplayerx, UINT8 newplayery) {
+    UINT16 indexBRx, indexBRy, tileindexBR;
+    UBYTE result;
+
+    indexBRx = (newplayerx) / 8;
+    indexBRy = (newplayery) / 8;
+    tileindexBR = 20 * indexBRy + indexBRx;
+
+    result = COLLISION_MAP[tileindexBR] == blankmap[0];
+
+    return result;
+}
+//bottom left pixel
+UBYTE canplayermoveBL(UINT8 newplayerx, UINT8 newplayery) {
+    UINT16 indexBLx, indexBLy, tileindexBL;
+    UBYTE result;
+
+    indexBLx = (newplayerx - 8) / 8;
+    indexBLy = (newplayery) / 8;
+    tileindexBL = 20 * indexBLy + indexBLx;
+
+    result = COLLISION_MAP[tileindexBL] == blankmap[0];
 
     return result;
 }
@@ -87,14 +116,14 @@ void main() {
 
         // game object
         if (joypads.joy0 & J_UP) {
-            if ((canplayermove(PosX, PosY - 1)) && (canplayermoveup(PosX, PosY - 1))) {
+            if ((canplayermoveTL(PosX, PosY - 1)) && (canplayermoveTR(PosX, PosY - 1))) {
                 SpdY -= 2;
                 if (SpdY < -4) SpdY = -4;
                 updateplayer();
             }
             // else SpdY = 4;
         } else if (joypads.joy0 & J_DOWN) {
-            if (canplayermove(PosX, PosY + 8)) {
+            if (canplayermoveTL(PosX, PosY + 8)) {
                 SpdY += 2;
                 if (SpdY > 4) SpdY = 4;
                 updateplayer();
@@ -102,14 +131,14 @@ void main() {
             // else SpdY = -4;
         }
         if (joypads.joy0 & J_LEFT) {
-            if (canplayermove(PosX - 1, PosY)) {
+            if (canplayermoveTL(PosX - 1, PosY)) {
                 SpdX -= 2;
                 if (SpdX < -4) SpdX = -4;
                 updateplayer();
             }
 
         } else if (joypads.joy0 & J_RIGHT) {
-            if (canplayermove(PosX + 8, PosY)) {
+            if ((canplayermoveTR(PosX + 1, PosY)) && (canplayermoveBR(PosX, PosY + 1))) {
                 SpdX += 2;
                 if (SpdX > 4) SpdX = 4;
                 updateplayer();
