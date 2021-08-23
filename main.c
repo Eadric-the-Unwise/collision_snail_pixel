@@ -86,7 +86,7 @@ void main() {
             }
             // else SpdY = 4;
         } else if (joypads.joy0 & J_DOWN) {
-            if (canplayermove(PosX, PosY + 10)) {
+            if (canplayermove(PosX, PosY + 8)) {
                 SpdY += 2;
                 if (SpdY > 4) SpdY = 4;
                 updateplayer();
@@ -94,14 +94,14 @@ void main() {
             // else SpdY = -4;
         }
         if (joypads.joy0 & J_LEFT) {
-            if (canplayermove(PosX - 3, PosY)) {
+            if (canplayermove(PosX - 1, PosY)) {
                 SpdX -= 2;
                 if (SpdX < -4) SpdX = -4;
                 updateplayer();
             }
 
         } else if (joypads.joy0 & J_RIGHT) {
-            if (canplayermove(PosX + 10, PosY)) {
+            if (canplayermove(PosX + 8, PosY)) {
                 SpdX += 2;
                 if (SpdX > 4) SpdX = 4;
                 updateplayer();
