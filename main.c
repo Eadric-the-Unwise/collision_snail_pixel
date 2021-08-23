@@ -33,6 +33,7 @@ UBYTE canplayermoveTL(UINT8 newplayerx, UINT8 newplayery);
 UBYTE canplayermoveTR(UINT8 newplayerx, UINT8 newplayery);
 UBYTE canplayermoveBL(UINT8 newplayerx, UINT8 newplayery);
 UBYTE canplayermoveBR(UINT8 newplayerx, UINT8 newplayery);
+void checkplayerposition(UINT16 PosX, UINT16 PosY);
 void updateplayer();
 UBYTE canplayermoveTL(UINT8 newplayerx, UINT8 newplayery) {
     UINT16 indexTLx, indexTLy, tileindexTL;
@@ -41,7 +42,7 @@ UBYTE canplayermoveTL(UINT8 newplayerx, UINT8 newplayery) {
     indexTLx = (newplayerx - 8) / 8;
     indexTLy = (newplayery - 16) / 8;
     tileindexTL = 20 * indexTLy + indexTLx;
-
+    //if COLLISION_MAP tile is blank, then it calls the function
     result = COLLISION_MAP[tileindexTL] == blankmap[0];
 
     return result;
@@ -65,7 +66,7 @@ UBYTE canplayermoveBR(UINT8 newplayerx, UINT8 newplayery) {
     UBYTE result;
 
     indexBRx = (newplayerx) / 8;
-    indexBRy = (newplayery) / 8;
+    indexBRy = (newplayery - 8) / 8;
     tileindexBR = 20 * indexBRy + indexBRx;
 
     result = COLLISION_MAP[tileindexBR] == blankmap[0];
@@ -78,12 +79,28 @@ UBYTE canplayermoveBL(UINT8 newplayerx, UINT8 newplayery) {
     UBYTE result;
 
     indexBLx = (newplayerx - 8) / 8;
-    indexBLy = (newplayery) / 8;
+    indexBLy = (newplayery - 8) / 8;
     tileindexBL = 20 * indexBLy + indexBLx;
 
     result = COLLISION_MAP[tileindexBL] == blankmap[0];
 
     return result;
+}
+
+void checkplayerposition(UINT16 PosX, UINT16 PosY) {
+    UINT16 indexTLx, indexTLy, tileindexTL;
+    indexTLx = (PosX - 8) / 8;
+    indexTLy = (PosY - 16) / 8;
+    tileindexTL = 20 * indexTLy + indexTLx;
+
+    UINT16 indexBLx, indexBLy, tileindexBL;
+    indexBLx = (PosX - 8) / 8;
+    indexBLy = (PosY - 8) / 8;
+    tileindexBL = 20 * indexBLy + indexBLx;
+
+    if (COLLISION_MAP[tileindexTL] != blankmap[0]) {
+        move_sprite(0, PosX + 1, PosY);
+    };
 }
 void updateplayer() {
     PosX += SpdX, PosY += SpdY;
@@ -103,7 +120,8 @@ void main() {
     set_sprite_data(0, 4, sprite_data);
     set_sprite_tile(0, 0);  //defines the tiles numbers
 
-    PosX = PosY = 48;
+    PosX = 120;
+    PosY = 48;
     SpdX = SpdY = 0;
 
     move_sprite(0, PosX, PosY);
@@ -115,37 +133,48 @@ void main() {
         joypad_ex(&joypads);
 
         // game object
+        if ((joypads.joy0 & J_DOWN) && (joypads.joy0 & J_LEFT)) {
+            if ((canplayermoveBL(PosX, PosY - 4)) && (canplayermoveBL(PosX - 4, PosY) && (canplayermoveBR(PosX, PosY - 4)) && canplayermoveTL(PosX, PosY - 4))) {
+                SpdY += 1;
+                if (SpdY > 3) SpdY = 3;
+                SpdX -= 1;
+
+                if (SpdX < -3) SpdX = -3;
+                updateplayer();
+            }
+        }
         if (joypads.joy0 & J_UP) {
-            if ((canplayermoveTL(PosX, PosY - 1)) && (canplayermoveTR(PosX, PosY - 1))) {
-                SpdY -= 2;
+            if ((canplayermoveTL(PosX, PosY - 4)) && (canplayermoveTR(PosX, PosY - 4))) {
+                SpdY -= 1;
                 if (SpdY < -4) SpdY = -4;
                 updateplayer();
             }
             // else SpdY = 4;
-        } else if (joypads.joy0 & J_DOWN) {
-            if (canplayermoveTL(PosX, PosY + 8)) {
-                SpdY += 2;
+        } else if ((joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_LEFT)) {
+            if ((canplayermoveBL(PosX, PosY + 4)) && (canplayermoveBR(PosX, PosY + 4))) {
+                SpdY += 1;
                 if (SpdY > 4) SpdY = 4;
                 updateplayer();
             }
             // else SpdY = -4;
         }
-        if (joypads.joy0 & J_LEFT) {
-            if (canplayermoveTL(PosX - 1, PosY)) {
-                SpdX -= 2;
+
+        if ((joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_DOWN)) {
+            if ((canplayermoveTL(PosX - 4, PosY)) && (canplayermoveBL(PosX - 4, PosY))) {
+                SpdX -= 1;
                 if (SpdX < -4) SpdX = -4;
                 updateplayer();
             }
 
         } else if (joypads.joy0 & J_RIGHT) {
-            if ((canplayermoveTR(PosX + 1, PosY)) && (canplayermoveBR(PosX, PosY + 1))) {
-                SpdX += 2;
+            if ((canplayermoveTR(PosX + 2, PosY)) && (canplayermoveBR(PosX + 2, PosY))) {
+                SpdX += 1;
                 if (SpdX > 4) SpdX = 4;
                 updateplayer();
             }
         }
-
-        // decelerate
+        checkplayerposition(PosX, PosY);
+        // decelerate Boolean check
         if (SpdY >= 0) {
             if (SpdY) SpdY--;
         } else
