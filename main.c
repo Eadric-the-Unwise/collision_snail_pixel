@@ -86,21 +86,21 @@ UBYTE canplayermoveBL(UINT8 newplayerx, UINT8 newplayery) {
     return result;
 }
 
-void checkplayerposition(UINT16 PosX, UINT16 PosY) {
-    UINT16 indexTLx, indexTLy, tileindexTL;
-    indexTLx = (PosX - 8) / 8;
-    indexTLy = (PosY - 16) / 8;
-    tileindexTL = 20 * indexTLy + indexTLx;
+// void checkplayerposition(UINT16 PosX, UINT16 PosY) {
+//     UINT16 indexTLx, indexTLy, tileindexTL;
+//     indexTLx = (PosX - 8) / 8;
+//     indexTLy = (PosY - 8) / 8;
+//     tileindexTL = 20 * indexTLy + indexTLx;
 
-    UINT16 indexBLx, indexBLy, tileindexBL;
-    indexBLx = (PosX - 8) / 8;
-    indexBLy = (PosY - 8) / 8;
-    tileindexBL = 20 * indexBLy + indexBLx;
+//     UINT16 indexBLx, indexBLy, tileindexBL;
+//     indexBLx = (PosX - 8) / 8;
+//     indexBLy = (PosY - 8) / 8;
+//     tileindexBL = 20 * indexBLy + indexBLx;
 
-    if (COLLISION_MAP[tileindexTL] != blankmap[0]) {
-        move_sprite(0, PosX + 1, PosY);
-    };
-}
+//     if (COLLISION_MAP[tileindexTL] != blankmap[0]) {
+//         move_sprite(0, PosX + 1, PosY);
+//     };
+// }
 void updateplayer() {
     PosX += SpdX, PosY += SpdY;
 
@@ -144,16 +144,53 @@ void main() {
                 }
                 updateplayer();
             }
+        } else if ((joypads.joy0 & J_DOWN) && (joypads.joy0 & J_RIGHT)) {
+            if ((canplayermoveBL(PosX, PosY + 2)) && (canplayermoveBR(PosX + 2, PosY + 2)) && (canplayermoveTR(PosX + 2, PosY))) {
+                SpdY += 1;
+                if (SpdY > 4) {
+                    SpdY = 4;
+                }
+                SpdX += 1;
+                if (SpdX > 4) {
+                    SpdX = 4;
+                }
+                updateplayer();
+            }
+        }
+        if ((joypads.joy0 & J_UP) && (joypads.joy0 & J_LEFT)) {
+            if ((canplayermoveBL(PosX - 2, PosY - 2)) && (canplayermoveBR(PosX, PosY - 2)) && (canplayermoveTL(PosX - 2, PosY))) {
+                SpdY -= 1;
+                if (SpdY < -4) {
+                    SpdY = -4;
+                }
+                SpdX -= 1;
+                if (SpdX < -4) {
+                    SpdX = -4;
+                }
+                updateplayer();
+            }
+        } else if ((joypads.joy0 & J_UP) && (joypads.joy0 & J_RIGHT)) {
+            if ((canplayermoveBL(PosX, PosY - 2)) && (canplayermoveBR(PosX + 2, PosY - 2)) && (canplayermoveTR(PosX + 2, PosY))) {
+                SpdY -= 1;
+                if (SpdY < -4) {
+                    SpdY = -4;
+                }
+                SpdX += 1;
+                if (SpdX > 4) {
+                    SpdX = 4;
+                }
+                updateplayer();
+            }
         }
 
-        if (joypads.joy0 & J_UP) {
+        if ((joypads.joy0 & J_UP) && !(joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_RIGHT)) {
             if ((canplayermoveTL(PosX, PosY - 4)) && (canplayermoveTR(PosX, PosY - 4))) {
                 SpdY -= 1;
                 if (SpdY < -5) SpdY = -5;
                 updateplayer();
             }
             // else SpdY = 4;
-        } else if ((joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_LEFT)) {
+        } else if ((joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_RIGHT)) {
             if ((canplayermoveBL(PosX, PosY + 4)) && (canplayermoveBR(PosX, PosY + 4))) {
                 SpdY += 1;
                 if (SpdY > 5) SpdY = 5;
@@ -162,21 +199,21 @@ void main() {
             // else SpdY = -4;
         }
 
-        if ((joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_DOWN)) {
-            if ((canplayermoveTL(PosX - 4, PosY)) && (canplayermoveBL(PosX - 4, PosY))) {
+        if ((joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_UP)) {
+            if ((canplayermoveTL(PosX - 2, PosY)) && (canplayermoveBL(PosX - 2, PosY))) {
                 SpdX -= 1;
                 if (SpdX < -5) SpdX = -5;
                 updateplayer();
             }
 
-        } else if (joypads.joy0 & J_RIGHT) {
+        } else if ((joypads.joy0 & J_RIGHT) && !(joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_UP)) {
             if ((canplayermoveTR(PosX + 2, PosY)) && (canplayermoveBR(PosX + 2, PosY))) {
                 SpdX += 1;
                 if (SpdX > 5) SpdX = 5;
                 updateplayer();
             }
         }
-        checkplayerposition(PosX, PosY);
+        // checkplayerposition(PosX, PosY);
         // decelerate Boolean check
         if (SpdY >= 0) {
             if (SpdY) SpdY--;
