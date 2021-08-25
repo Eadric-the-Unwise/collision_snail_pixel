@@ -10,4 +10,4 @@
 @REM C:\c_code\projects\detective\detective_metasprite\build\gb_map_converter\gb_map_converter.exe -i C:\c_code\projects\detective\submap_troubleshooting\maps\submap\bkg_submap.png -n bkg_submap -o .\maps\submap
 
 @REM C:\c_code\projects\detective\detective_metasprite\build\gb_map_converter\gb_map_converter.exe -i .\maps\submap\submap.png -n submap -o .\maps\submap
-C:\c_code\projects\detective\detective_metasprite\build\gb_map_converter\gb_map_converter.exe -i .\res\bkg.png bkg -o .\res\
+C:\c_code\projects\detective\detective_metasprite\build\gb_map_converter\gb_map_converter.exe -i .\res\collisions.png -n collisions_aesprite -o .\res\

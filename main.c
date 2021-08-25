@@ -5,7 +5,6 @@
 #include "./res/bkg_tiles.h"
 #include "./res/collision_map.h"
 #include "./res/collision_tiles.h"
-#include "./res/collisions.h"
 #include "./res/wall_map.h"
 #include "./res/wall_tiles.h"
 #include "wallMap1tile.c"
@@ -114,8 +113,8 @@ void main() {
     DISPLAY_ON;
     BGP_REG = 0x1B;
 
-    set_bkg_data(0, WALL_TILE_COUNT, WALL_TILE_DATA);
-    set_bkg_tiles(0, 0, WALL_MAP_WIDTH, WALL_MAP_HEIGHT, WALL_MAP_DATA);  //0,0 is the start, 20, 18 is the end result (aka full screen size, no scrolling)
+    set_bkg_data(0, 2, COLLISIONS_TILE_DATA);
+    set_bkg_tiles(0, 0, WALL_MAP_WIDTH, WALL_MAP_HEIGHT, COLLISION_MAP);  //0,0 is the start, 20, 18 is the end result (aka full screen size, no scrolling)
 
     set_sprite_data(0, 4, sprite_data);
     set_sprite_tile(0, 0);  //defines the tiles numbers
@@ -134,26 +133,30 @@ void main() {
 
         // game object
         if ((joypads.joy0 & J_DOWN) && (joypads.joy0 & J_LEFT)) {
-            if ((canplayermoveBL(PosX, PosY - 4)) && (canplayermoveBL(PosX - 4, PosY) && (canplayermoveBR(PosX, PosY - 4)) && canplayermoveTL(PosX, PosY - 4))) {
+            if ((canplayermoveBL(PosX - 2, PosY + 2)) && (canplayermoveBR(PosX, PosY + 2)) && (canplayermoveTL(PosX - 2, PosY))) {
                 SpdY += 1;
-                if (SpdY > 3) SpdY = 3;
+                if (SpdY > 4) {
+                    SpdY = 4;
+                }
                 SpdX -= 1;
-
-                if (SpdX < -3) SpdX = -3;
+                if (SpdX < -4) {
+                    SpdX = -4;
+                }
                 updateplayer();
             }
         }
+
         if (joypads.joy0 & J_UP) {
             if ((canplayermoveTL(PosX, PosY - 4)) && (canplayermoveTR(PosX, PosY - 4))) {
                 SpdY -= 1;
-                if (SpdY < -4) SpdY = -4;
+                if (SpdY < -5) SpdY = -5;
                 updateplayer();
             }
             // else SpdY = 4;
         } else if ((joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_LEFT)) {
             if ((canplayermoveBL(PosX, PosY + 4)) && (canplayermoveBR(PosX, PosY + 4))) {
                 SpdY += 1;
-                if (SpdY > 4) SpdY = 4;
+                if (SpdY > 5) SpdY = 5;
                 updateplayer();
             }
             // else SpdY = -4;
@@ -162,14 +165,14 @@ void main() {
         if ((joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_DOWN)) {
             if ((canplayermoveTL(PosX - 4, PosY)) && (canplayermoveBL(PosX - 4, PosY))) {
                 SpdX -= 1;
-                if (SpdX < -4) SpdX = -4;
+                if (SpdX < -5) SpdX = -5;
                 updateplayer();
             }
 
         } else if (joypads.joy0 & J_RIGHT) {
             if ((canplayermoveTR(PosX + 2, PosY)) && (canplayermoveBR(PosX + 2, PosY))) {
                 SpdX += 1;
-                if (SpdX > 4) SpdX = 4;
+                if (SpdX > 5) SpdX = 5;
                 updateplayer();
             }
         }

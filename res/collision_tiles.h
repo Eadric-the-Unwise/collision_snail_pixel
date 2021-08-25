@@ -8,7 +8,7 @@
   Form                 : All tiles as one unit.
   Format               : Gameboy 4 color.
   Compression          : None.
-  Counter              : Byte-count as Byte.
+  Counter              : None.
   Tile size            : 8 x 8
   Tiles                : 0 to 1
 
@@ -24,8 +24,8 @@
 
 
 /* Bank of tiles. */
-#define COLLISION_TILESBank 0
+#define COLLISIONS_TILE_DATABank 0
 /* Start of tile array. */
-extern unsigned char COLLISION_TILES[];
+extern unsigned char COLLISIONS_TILE_DATA[];
 
 /* End of COLLISION_TILES.H */
