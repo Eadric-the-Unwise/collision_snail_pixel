@@ -12,7 +12,7 @@
 
 unsigned char joystate;
 
-const char blankmap[1] = {0x00};
+const unsigned char blankmap[1] = {0x00};
 
 UBYTE gamerunning;
 UINT16 PosX, PosY;
@@ -51,7 +51,7 @@ UBYTE canplayermoveTR(UINT8 newplayerx, UINT8 newplayery) {
     UINT16 indexTRx, indexTRy, tileindexTR;
     UBYTE result;
 
-    indexTRx = (newplayerx) / 8;
+    indexTRx = (newplayerx - 1) / 8;
     indexTRy = (newplayery - 16) / 8;
     tileindexTR = 20 * indexTRy + indexTRx;
 
@@ -64,8 +64,8 @@ UBYTE canplayermoveBR(UINT8 newplayerx, UINT8 newplayery) {
     UINT16 indexBRx, indexBRy, tileindexBR;
     UBYTE result;
 
-    indexBRx = (newplayerx) / 8;
-    indexBRy = (newplayery - 8) / 8;
+    indexBRx = (newplayerx - 1) / 8;
+    indexBRy = (newplayery - 9) / 8;
     tileindexBR = 20 * indexBRy + indexBRx;
 
     result = COLLISION_MAP[tileindexBR] == blankmap[0];
@@ -78,7 +78,7 @@ UBYTE canplayermoveBL(UINT8 newplayerx, UINT8 newplayery) {
     UBYTE result;
 
     indexBLx = (newplayerx - 8) / 8;
-    indexBLy = (newplayery - 8) / 8;
+    indexBLy = (newplayery - 9) / 8;
     tileindexBL = 20 * indexBLy + indexBLx;
 
     result = COLLISION_MAP[tileindexBL] == blankmap[0];
@@ -133,7 +133,7 @@ void main() {
 
         // game object
         if ((joypads.joy0 & J_DOWN) && (joypads.joy0 & J_LEFT)) {
-            if ((canplayermoveBL(PosX - 2, PosY + 2)) && (canplayermoveBR(PosX, PosY + 2)) && (canplayermoveTL(PosX - 2, PosY))) {
+            if ((canplayermoveBL(PosX - 1, PosY + 1)) && (canplayermoveBR(PosX, PosY + 1)) && (canplayermoveTL(PosX - 1, PosY))) {
                 SpdY += 1;
                 if (SpdY > 4) {
                     SpdY = 4;
@@ -143,9 +143,15 @@ void main() {
                     SpdX = -4;
                 }
                 updateplayer();
+            } else if ((canplayermoveBL(PosX - 1, PosY)) && (canplayermoveTL(PosX - 1, PosY))) {
+                SpdX -= 1;
+                if (SpdX < -4) {
+                    SpdX = -4;
+                }
+                updateplayer();
             }
         } else if ((joypads.joy0 & J_DOWN) && (joypads.joy0 & J_RIGHT)) {
-            if ((canplayermoveBL(PosX, PosY + 2)) && (canplayermoveBR(PosX + 2, PosY + 2)) && (canplayermoveTR(PosX + 2, PosY))) {
+            if ((canplayermoveBL(PosX, PosY + 1)) && (canplayermoveBR(PosX + 1, PosY + 1)) && (canplayermoveTR(PosX + 1, PosY))) {
                 SpdY += 1;
                 if (SpdY > 4) {
                     SpdY = 4;
@@ -155,10 +161,16 @@ void main() {
                     SpdX = 4;
                 }
                 updateplayer();
+            } else if ((canplayermoveBR(PosX + 1, PosY)) && (canplayermoveTR(PosX + 1, PosY))) {
+                SpdX += 1;
+                if (SpdX > 4) {
+                    SpdX = 4;
+                }
+                updateplayer();
             }
         }
         if ((joypads.joy0 & J_UP) && (joypads.joy0 & J_LEFT)) {
-            if ((canplayermoveBL(PosX - 2, PosY - 2)) && (canplayermoveBR(PosX, PosY - 2)) && (canplayermoveTL(PosX - 2, PosY))) {
+            if ((canplayermoveTL(PosX - 1, PosY - 1)) && (canplayermoveTR(PosX, PosY - 1)) && (canplayermoveBL(PosX - 1, PosY))) {
                 SpdY -= 1;
                 if (SpdY < -4) {
                     SpdY = -4;
@@ -170,7 +182,7 @@ void main() {
                 updateplayer();
             }
         } else if ((joypads.joy0 & J_UP) && (joypads.joy0 & J_RIGHT)) {
-            if ((canplayermoveBL(PosX, PosY - 2)) && (canplayermoveBR(PosX + 2, PosY - 2)) && (canplayermoveTR(PosX + 2, PosY))) {
+            if ((canplayermoveTL(PosX, PosY - 1)) && (canplayermoveTR(PosX + 1, PosY - 1)) && (canplayermoveBR(PosX + 1, PosY))) {
                 SpdY -= 1;
                 if (SpdY < -4) {
                     SpdY = -4;
@@ -184,14 +196,14 @@ void main() {
         }
 
         if ((joypads.joy0 & J_UP) && !(joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_RIGHT)) {
-            if ((canplayermoveTL(PosX, PosY - 4)) && (canplayermoveTR(PosX, PosY - 4))) {
+            if ((canplayermoveTL(PosX, PosY - 1)) && (canplayermoveTR(PosX, PosY - 1))) {
                 SpdY -= 1;
                 if (SpdY < -5) SpdY = -5;
                 updateplayer();
             }
             // else SpdY = 4;
         } else if ((joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_RIGHT)) {
-            if ((canplayermoveBL(PosX, PosY + 4)) && (canplayermoveBR(PosX, PosY + 4))) {
+            if ((canplayermoveBL(PosX, PosY + 1)) && (canplayermoveBR(PosX, PosY + 1))) {
                 SpdY += 1;
                 if (SpdY > 5) SpdY = 5;
                 updateplayer();
@@ -200,14 +212,14 @@ void main() {
         }
 
         if ((joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_UP)) {
-            if ((canplayermoveTL(PosX - 2, PosY)) && (canplayermoveBL(PosX - 2, PosY))) {
+            if ((canplayermoveTL(PosX - 1, PosY)) && (canplayermoveBL(PosX - 1, PosY))) {
                 SpdX -= 1;
                 if (SpdX < -5) SpdX = -5;
                 updateplayer();
             }
 
         } else if ((joypads.joy0 & J_RIGHT) && !(joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_UP)) {
-            if ((canplayermoveTR(PosX + 2, PosY)) && (canplayermoveBR(PosX + 2, PosY))) {
+            if ((canplayermoveTR(PosX + 1, PosY)) && (canplayermoveBR(PosX + 1, PosY))) {
                 SpdX += 1;
                 if (SpdX > 5) SpdX = 5;
                 updateplayer();
