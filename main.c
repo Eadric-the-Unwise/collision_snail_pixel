@@ -18,6 +18,7 @@ UBYTE gamerunning;
 UINT16 PosX, PosY;
 INT16 SpdX, SpdY;
 joypads_t joypads;
+UINT8 joy;
 
 UINT8 sprite_data[] = {
     0x3C, 0x3C, 0x42, 0x7E, 0x99, 0xFF, 0xA9, 0xFF, 0x89, 0xFF, 0x89, 0xFF, 0x42, 0x7E, 0x3C, 0x3C,
@@ -112,6 +113,7 @@ void main() {
     SHOW_BKG;
     DISPLAY_ON;
     BGP_REG = 0x1B;
+    gamerunning = TRUE;
 
     set_bkg_data(0, 2, COLLISIONS_TILE_DATA);
     set_bkg_tiles(0, 0, WALL_MAP_WIDTH, WALL_MAP_HEIGHT, COLLISION_MAP);  //0,0 is the start, 20, 18 is the end result (aka full screen size, no scrolling)
@@ -125,14 +127,15 @@ void main() {
 
     move_sprite(0, PosX, PosY);
 
-    joypad_init(1, &joypads);
+    // joypad_init(1, &joypads);
 
     while (gamerunning) {
         // poll joypads
-        joypad_ex(&joypads);
+        // joypad_ex(&joypads);
+        joy = joypad();
 
         // game object
-        if ((joypads.joy0 & J_DOWN) && (joypads.joy0 & J_LEFT)) {
+        if ((joy & J_DOWN) && (joy & J_LEFT)) {
             if ((canplayermoveBL(PosX - 1, PosY + 1)) && (canplayermoveBR(PosX, PosY + 1)) && (canplayermoveTL(PosX - 1, PosY))) {
                 SpdY += 1;
                 if (SpdY > 4) {
@@ -145,12 +148,18 @@ void main() {
                 updateplayer();
             } else if ((canplayermoveBL(PosX - 1, PosY)) && (canplayermoveTL(PosX - 1, PosY))) {
                 SpdX -= 1;
-                if (SpdX < -4) {
-                    SpdX = -4;
+                if (SpdX < -5) {
+                    SpdX = -5;
+                }
+                updateplayer();
+            } else if ((canplayermoveBL(PosX, PosY + 1)) && (canplayermoveTL(PosX, PosY + 1))) {
+                SpdY += 1;
+                if (SpdY > 5) {
+                    SpdY = 5;
                 }
                 updateplayer();
             }
-        } else if ((joypads.joy0 & J_DOWN) && (joypads.joy0 & J_RIGHT)) {
+        } else if ((joy & J_DOWN) && (joy & J_RIGHT)) {
             if ((canplayermoveBL(PosX, PosY + 1)) && (canplayermoveBR(PosX + 1, PosY + 1)) && (canplayermoveTR(PosX + 1, PosY))) {
                 SpdY += 1;
                 if (SpdY > 4) {
@@ -163,13 +172,19 @@ void main() {
                 updateplayer();
             } else if ((canplayermoveBR(PosX + 1, PosY)) && (canplayermoveTR(PosX + 1, PosY))) {
                 SpdX += 1;
-                if (SpdX > 4) {
-                    SpdX = 4;
+                if (SpdX > 5) {
+                    SpdX = 5;
+                }
+                updateplayer();
+            } else if ((canplayermoveBR(PosX, PosY + 1)) && (canplayermoveTR(PosX, PosY + 1))) {
+                SpdY += 1;
+                if (SpdY > 5) {
+                    SpdY = 5;
                 }
                 updateplayer();
             }
         }
-        if ((joypads.joy0 & J_UP) && (joypads.joy0 & J_LEFT)) {
+        if ((joy & J_UP) && (joy & J_LEFT)) {
             if ((canplayermoveTL(PosX - 1, PosY - 1)) && (canplayermoveTR(PosX, PosY - 1)) && (canplayermoveBL(PosX - 1, PosY))) {
                 SpdY -= 1;
                 if (SpdY < -4) {
@@ -180,8 +195,20 @@ void main() {
                     SpdX = -4;
                 }
                 updateplayer();
+            } else if ((canplayermoveBL(PosX - 1, PosY)) && (canplayermoveTL(PosX - 1, PosY))) {
+                SpdX -= 1;
+                if (SpdX < -5) {
+                    SpdX = -5;
+                }
+                updateplayer();
+            } else if ((canplayermoveBL(PosX, PosY - 1)) && (canplayermoveTL(PosX, PosY - 1))) {
+                SpdY -= 1;
+                if (SpdY < -5) {
+                    SpdY = -5;
+                }
+                updateplayer();
             }
-        } else if ((joypads.joy0 & J_UP) && (joypads.joy0 & J_RIGHT)) {
+        } else if ((joy & J_UP) && (joy & J_RIGHT)) {
             if ((canplayermoveTL(PosX, PosY - 1)) && (canplayermoveTR(PosX + 1, PosY - 1)) && (canplayermoveBR(PosX + 1, PosY))) {
                 SpdY -= 1;
                 if (SpdY < -4) {
@@ -192,17 +219,29 @@ void main() {
                     SpdX = 4;
                 }
                 updateplayer();
+            } else if ((canplayermoveBR(PosX + 1, PosY)) && (canplayermoveTR(PosX + 1, PosY))) {
+                SpdX += 1;
+                if (SpdX > 5) {
+                    SpdX = 5;
+                }
+                updateplayer();
+            } else if ((canplayermoveBR(PosX, PosY - 1)) && (canplayermoveTR(PosX, PosY - 1))) {
+                SpdY -= 1;
+                if (SpdY < -5) {
+                    SpdY = -5;
+                }
+                updateplayer();
             }
         }
 
-        if ((joypads.joy0 & J_UP) && !(joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_RIGHT)) {
+        if ((joy & J_UP) && !(joy & J_LEFT) && !(joy & J_RIGHT)) {
             if ((canplayermoveTL(PosX, PosY - 1)) && (canplayermoveTR(PosX, PosY - 1))) {
                 SpdY -= 1;
                 if (SpdY < -5) SpdY = -5;
                 updateplayer();
             }
             // else SpdY = 4;
-        } else if ((joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_RIGHT)) {
+        } else if ((joy & J_DOWN) && !(joy & J_LEFT) && !(joy & J_RIGHT)) {
             if ((canplayermoveBL(PosX, PosY + 1)) && (canplayermoveBR(PosX, PosY + 1))) {
                 SpdY += 1;
                 if (SpdY > 5) SpdY = 5;
@@ -211,14 +250,14 @@ void main() {
             // else SpdY = -4;
         }
 
-        if ((joypads.joy0 & J_LEFT) && !(joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_UP)) {
+        if ((joy & J_LEFT) && !(joy & J_DOWN) && !(joy & J_UP)) {
             if ((canplayermoveTL(PosX - 1, PosY)) && (canplayermoveBL(PosX - 1, PosY))) {
                 SpdX -= 1;
                 if (SpdX < -5) SpdX = -5;
                 updateplayer();
             }
 
-        } else if ((joypads.joy0 & J_RIGHT) && !(joypads.joy0 & J_DOWN) && !(joypads.joy0 & J_UP)) {
+        } else if ((joy & J_RIGHT) && !(joy & J_DOWN) && !(joy & J_UP)) {
             if ((canplayermoveTR(PosX + 1, PosY)) && (canplayermoveBR(PosX + 1, PosY))) {
                 SpdX += 1;
                 if (SpdX > 5) SpdX = 5;
